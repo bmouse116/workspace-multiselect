@@ -87,17 +87,13 @@ const registerShortcutDelete = function() {
       const dragSelection = dragSelectionWeakMap.get(workspace);
 
       // Handle the case where MultiselectDraggable is in use
-      if (dragSelection.size) {
-        dragSelection.forEach(function(id) {
-          const element = getByID(workspace, id);
-          if (selected instanceof MultiselectDraggable) {
-            selected.removeSubDraggable_(element);
-          }
-          apply(element);
-        });
+      if (selected && selected instanceof MultiselectDraggable) {
+        for (const element of selected.subDraggables) {
+          selected.removeSubDraggable_(element[0]);
+          apply(element[0]);
+        }
         dragSelection.clear();
-        if (selected instanceof MultiselectDraggable) selected.clearAll_();
-      } else {
+      } else if (!dragSelection.size) {
         apply(selected);
       }
 
@@ -173,11 +169,11 @@ const registerCopy = function(useCopyPasteCrossTab) {
       Blockly.Events.setGroup(true);
 
       // Handle the case where MultiselectDraggable is in use
-      if (dragSelection.size) {
-        dragSelection.forEach(function(id) {
-          apply(getByID(workspace, id));
-        });
-      } else {
+      if (selected && selected instanceof MultiselectDraggable) {
+        for (const element of selected.subDraggables) {
+          apply(element[0]);
+        }
+      } else if (!dragSelection.size) {
         apply(selected);
       }
 
@@ -288,15 +284,12 @@ const registerCut = function(useCopyPasteCrossTab) {
       Blockly.Events.setGroup(true);
 
       // Handle the case where MultiselectDraggable is in use
-      if (dragSelection.size) {
-        dragSelection.forEach(function(id) {
-          const element = getByID(workspace, id);
-          apply(element);
-          if (selected instanceof MultiselectDraggable) {
-            selected.removeSubDraggable_(element);
-          }
-        });
-      } else {
+      if (selected && selected instanceof MultiselectDraggable) {
+        for (const element of selected.subDraggables) {
+          apply(element[0]);
+          selected.removeSubDraggable_(element[0]);
+        }
+      } else if (!dragSelection.size) {
         apply(selected);
       }
       dragSelection.clear();
